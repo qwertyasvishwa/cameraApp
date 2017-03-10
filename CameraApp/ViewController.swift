@@ -20,7 +20,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             picker.sourceType = UIImagePickerControllerSourceType.camera
             picker.cameraDevice = .front
             picker.cameraCaptureMode = .photo
-            picker.modalPresentationStyle = .full   Screen
+            picker.modalPresentationStyle = .fullScreen
             present(picker,animated: true,completion: nil)
         }
         else {
