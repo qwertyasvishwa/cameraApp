@@ -12,6 +12,10 @@ import Alamofire
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var  chosenImage = UIImage()
     let picker = UIImagePickerController()
+    var filenameDate = String()
+    var filenameTime = String()
+    var filename = String()
+
     @IBOutlet weak var myImageView: UIImageView!
     
     @IBAction func shootPhoto(_ sender: UIButton) {
@@ -36,7 +40,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         myImageView.contentMode = .scaleAspectFit //3
         chosenImage.accessibilityValue = "me"
         myImageView.image = chosenImage //4
-        
         dismiss(animated:true, completion: nil) //5
     }
     
@@ -51,8 +54,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         debugPrint(imageData!)
         Alamofire.upload(
             multipartFormData:{ multipartFormData in
-                multipartFormData.append(imageData!, withName: "userfile",fileName: "photo1.jpeg",mimeType: "image/*")
-                multipartFormData.append("Hello".data(using: String.Encoding.utf8, allowLossyConversion: false)!, withName: "imgdesc")
+                multipartFormData.append(imageData!, withName: "userfile",fileName: self.filename ,mimeType: "image/*")
+                multipartFormData.append(self.filename.data(using: String.Encoding.utf8, allowLossyConversion: false)!, withName: "imgdesc")
         }, usingThreshold:UInt64.init(),
                          to:"http://vishwaraj.xyz/upload/store_image.php",
                          method:.post,
@@ -101,7 +104,21 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        let tcalendar = NSCalendar.current
+        let tdate = NSDate()
+        let day = tcalendar.component(.day, from: tdate as Date)
+        let month = tcalendar.component(.month, from: tdate as Date)
+        let year = tcalendar.component(.year, from: tdate as Date)
+        let hour = tcalendar.component(.hour, from: tdate as Date)
+        let minute = tcalendar.component(.minute, from: tdate as Date)
+        let seconds = tcalendar.component(.second, from: tdate as Date)
+        filenameDate = "\(year)\(month)\(day)"
+        filenameTime = "\(hour)\(minute)\(seconds)"
+        filename = filenameDate + filenameTime
+        print(filename)
+
+    }
     
     
 }
-
