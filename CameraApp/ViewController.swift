@@ -15,8 +15,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     var filenameDate = String()
     var filenameTime = String()
     var filename = String()
-
-    @IBOutlet weak var myImageView: UIImageView!
     
     @IBAction func shootPhoto(_ sender: UIButton) {
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
@@ -37,44 +35,37 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     {
         
         chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage //2
-        myImageView.contentMode = .scaleAspectFit //3
-        chosenImage.accessibilityValue = "me"
-        myImageView.image = chosenImage //4
         dismiss(animated:true, completion: nil) //5
-    }
-    
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    @IBAction func uploadBtnAction(_ sender: UIButton) {
         
-        let imageData = UIImageJPEGRepresentation(myImageView.image!, 0.9)
+        let imageData = UIImageJPEGRepresentation(chosenImage, 0.7)
         debugPrint(imageData!)
         Alamofire.upload(
             multipartFormData:{ multipartFormData in
                 multipartFormData.append(imageData!, withName: "userfile",fileName: self.filename ,mimeType: "image/*")
                 multipartFormData.append(self.filename.data(using: String.Encoding.utf8, allowLossyConversion: false)!, withName: "imgdesc")
         }, usingThreshold:UInt64.init(),
-                         to:"http://vishwaraj.xyz/upload/store_image.php",
-                         method:.post,
-                         encodingCompletion: { encodingResult in
-                            switch encodingResult {
-                            case .success(let upload, _, _):
-                                upload.responseJSON { response in
-                                    debugPrint(upload)
-                                    debugPrint(response)
-                                }
-                            case .failure(let encodingError):
-                                print(encodingError)
-                            }
+           to:"http://vishwaraj.xyz/upload/store_image.php",
+           method:.post,
+           encodingCompletion: { encodingResult in
+            switch encodingResult {
+            case .success(let upload, _, _):
+                upload.responseJSON { response in
+                    debugPrint(upload)
+                    debugPrint(response)
+                }
+            case .failure(let encodingError):
+                print(encodingError)
+            }
         })
+        
         
         
     }
     
     
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
     
     func noCamera(){
         let alertVC = UIAlertController(
